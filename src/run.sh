@@ -3,7 +3,7 @@
 # Compile the C++ program
 g++ file.cpp -o program
 
-# Check if compilation was successful
+# Check if compilation was successful or not
 if [ $? -eq 0 ]; then
     # Run the compiled program with input from input.txt and display the output
     ./program < inp.txt
