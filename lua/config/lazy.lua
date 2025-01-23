@@ -65,7 +65,6 @@ vim.opt.smarttab = true
 vim.opt.softtabstop = 4
 vim.opt.relativenumber = false
 vim.opt.number = true
-
 -- Enable true color and set dark background
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
@@ -80,3 +79,23 @@ vim.cmd([[
   highlight LineNr guifg=#ADD8E6
   highlight CursorLineNr guifg=orange gui=bold
 ]])
+
+--suggestino box
+vim.api.nvim_set_hl(0, "CmpItemAbbr", { fg = "#FFFFFF", bg = "#1E1E1E" })  -- Text in the box
+vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { fg = "#569CD6", bold = true }) -- Matched text
+vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#C586C0", bold = true })
+vim.api.nvim_set_hl(0, "CmpItemKind", { fg = "#4EC9B0", bg = "#1E1E1E" })  -- Icons
+vim.api.nvim_set_hl(0, "CmpItemMenu", { fg = "#C8C8C8", italic = true }) 
+
+
+--C++ config:
+-- Load LSP config
+require'lspconfig'.clangd.setup {}
+
+-- Optional: Show diagnostic messages in a floating window
+vim.diagnostic.config({
+    virtual_text = true,  -- Inline error messages
+    signs = true,         -- Show signs in the gutter
+    underline = true,     -- Underline errors in code
+    update_in_insert = false,  -- Update diagnostics while in insert mode
+})
