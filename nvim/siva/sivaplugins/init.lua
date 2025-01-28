@@ -1,4 +1,4 @@
--- Ensure Packer is installed
+--this is to  ensure Packer is installed
 local ensure_packer = function()
     local fn = vim.fn
     local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
@@ -13,38 +13,36 @@ local packer_bootstrap = ensure_packer()
 
 -- Plugin installation
 require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'          -- Plugin manager
-    use 'neovim/nvim-lspconfig'          -- LSP configuration
-    use 'hrsh7th/nvim-cmp'               -- Autocompletion plugin
-    use 'hrsh7th/cmp-nvim-lsp'           -- LSP completion source for nvim-cmp
-    use 'nvim-treesitter/nvim-treesitter' -- Syntax highlighting
-    use 'windwp/nvim-autopairs'          -- Auto-pairing
-    use 'nvim-lualine/lualine.nvim'      -- Statusline
-    use 'EdenEast/nightfox.nvim'         -- Nightfox theme
+    use 'wbthomason/packer.nvim'          
+    use 'neovim/nvim-lspconfig'          
+    use 'hrsh7th/nvim-cmp'               
+    use 'hrsh7th/cmp-nvim-lsp'           
+    use 'nvim-treesitter/nvim-treesitter' 
+    use 'windwp/nvim-autopairs'          
+    use 'nvim-lualine/lualine.nvim'      
+    use 'EdenEast/nightfox.nvim'         
 
     if packer_bootstrap then
         require('packer').sync()
     end
 end)
 
--- General Settings
-vim.o.number = true                 -- Enable line numbers
-vim.o.relativenumber = false        -- Disable relative line numbers
-vim.o.background = "dark"           -- Use dark background for themes
+vim.o.number = true                
+vim.o.relativenumber = false        
+vim.o.background = "dark"           
 
--- Set the Nightfox theme to Carbonfox
 require('nightfox').setup({
     options = {
-        styles = { -- Customize code styles
+        styles = { 
             comments = "italic",
             keywords = "bold",
         },
         inverse = {
-            match_paren = true, -- Invert match parens
+            match_paren = true, 
         },
     }
 })
-vim.cmd [[colorscheme carbonfox]] -- Apply the "Carbonfox" theme for super-black background
+vim.cmd [[colorscheme carbonfox]] 
 
 -- LSP Configuration for C++
 local lspconfig = require('lspconfig')
@@ -70,7 +68,7 @@ require('nvim-autopairs').setup{}
 require('nvim-treesitter.configs').setup {
     ensure_installed = { "cpp", "c" }, -- Install C++ parsers
     highlight = {
-        enable = true,                -- Enable syntax highlighting
+        enable = false,                -- Enable syntax highlighting
     },
 }
 
@@ -83,3 +81,5 @@ require('lualine').setup {
     },
 }
 
+
+require('options').setup()
