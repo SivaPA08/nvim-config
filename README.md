@@ -27,6 +27,12 @@ Clone the repository and move the `nvim` folder to your Neovim configuration dir
 ```sh
 cp -r nvim-config/nvim ~/.config/nvim
 ```
+If ~/.config folder doesn't exist:
+```sh
+mkdir -p ~/.config
+cd ~/.config
+mkdir nvim
+```
 
 ### Step 3: Install Packer
 Packer is used for plugin management. Install it using:
