@@ -1,0 +1,136 @@
+-- Ensure Packer is installed
+vim.cmd([[packadd nvim-autopairs]])
+
+local ensure_packer = function()
+    local fn = vim.fn
+    local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+    if fn.empty(fn.glob(install_path)) > 0 then
+        fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+        vim.cmd [[packadd packer.nvim]]
+        return true
+    end
+    return false
+end
+local packer_bootstrap = ensure_packer()
+
+-- Plugin installation
+require('packer').startup(function(use)
+    -- Plugin manager
+    use 'wbthomason/packer.nvim'
+
+    -- LSP Configuration
+    use 'neovim/nvim-lspconfig'
+
+    -- nvim-cmp for autocompletion
+    use 'hrsh7th/nvim-cmp'
+
+    -- nvim-cmp sources
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-path'
+    use 'L3MON4D3/LuaSnip'               -- Snippet engine
+    use 'saadparwaiz1/cmp_luasnip'       -- LuaSnip completion source for nvim-cmp
+    use 'nvim-treesitter/nvim-treesitter' -- Syntax highlighting
+    use 'windwp/nvim-autopairs'           -- Auto-pairing
+    use 'nvim-lualine/lualine.nvim'       -- Statusline
+
+    -- Rose Pine Theme
+    use 'rose-pine/neovim'
+
+    -- If packer was just installed, sync it now
+    if packer_bootstrap then
+        require('packer').sync()
+    end
+end)
+
+-- General Settings
+vim.o.number = true                 -- Enable line numbers
+vim.o.relativenumber = true         -- Enable relative line numbers
+vim.o.background = "dark"           -- Use dark background for themes
+vim.o.swapfile = false              -- Disable swap files
+
+-- Set the Rose Pine theme with completely dark background
+require('rose-pine').setup({
+    variant = 'moon',      -- 'moon' is the darkest variant available
+    dark_variant = 'moon', -- Set the dark variant to 'moon' for consistency
+    highlight_groups = {
+        CursorLine = { bg = '#121212' },
+        StatusLine = { fg = '#ffffff', bg = '#121212' },
+        Normal = { bg = '#121212' },
+        Visual = { bg = '#2c2c2c' },
+        Search = { bg = '#333333' },
+        IncSearch = { bg = '#333333' },
+    },
+})
+vim.cmd [[colorscheme rose-pine]]
+
+-- LSP Configuration for C++ (clangd)
+local lspconfig = require('lspconfig')
+lspconfig.clangd.setup({
+    cmd = { "clangd", "--background-index" },
+    filetypes = { "c", "cpp", "objc", "objcpp" },
+    root_dir = lspconfig.util.root_pattern("compile_commands.json", "CMakeLists.txt", ".git"),
+    settings = {
+        clangd = {
+            cache = true,
+            clangdFileStatus = true,
+        }
+    },
+    on_attach = function(client, bufnr)
+        print("LSP client attached to buffer")
+    end,
+})
+
+-- Setup nvim-cmp for autocompletion
+local cmp = require('cmp')
+local luasnip = require('luasnip') -- LuaSnip for snippets
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = {
+        ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+        ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+        ['<S-Tab>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+    },
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'buffer' },
+        { name = 'path' },
+        { name = 'luasnip' },
+    },
+    completion = {
+        autocomplete = { cmp.TriggerEvent.TextChanged },
+    },
+})
+
+-- Setup LuaSnip
+require("luasnip.loaders.from_vscode").lazy_load()
+
+-- nvim-autopairs setup
+require('nvim-autopairs').setup({
+    check_ts = true,
+    fast_wrap = {},
+})
+
+-- Integrate nvim-autopairs with nvim-cmp
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
+
+-- nvim-lualine setup
+require('lualine').setup({
+    options = {
+        theme = 'rose-pine',
+        section_separators = {'', ''},
+        component_separators = {'', ''},
+    },
+})
+
